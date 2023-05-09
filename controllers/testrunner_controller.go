@@ -20,7 +20,7 @@ import (
 	"context"
 
 	operatorv1alpha1 "github.com/kelson-martins/tester-operator/api/v1alpha1"
-	assets "github.com/kelson-martins/tester-operator/assets"
+	"github.com/kelson-martins/tester-operator/assets"
 	appsv1 "k8s.io/api/apps/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -84,7 +84,7 @@ func (r *TestRunnerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 		create = true
 
-		deployment = assets.GetDeploymentFromFile("assets/deployment.yaml")
+		deployment = assets.GetDeploymentFromFile("manifests/deployment.yaml")
 
 	} else if err != nil {
 
