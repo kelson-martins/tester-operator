@@ -1,0 +1,31 @@
+# permissions for end users to edit testrunners.
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  labels:
+    app.kubernetes.io/name: clusterrole
+    app.kubernetes.io/instance: testrunner-editor-role
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/created-by: tester-operator
+    app.kubernetes.io/part-of: tester-operator
+    app.kubernetes.io/managed-by: kustomize
+  name: testrunner-editor-role
+rules:
+- apiGroups:
+  - operator.kelson.com
+  resources:
+  - testrunners
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - operator.kelson.com
+  resources:
+  - testrunners/status
+  verbs:
+  - get
