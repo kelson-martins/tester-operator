@@ -29,7 +29,7 @@ type TestRunnerSpec struct {
 	// Important: Run "make" to regenerate code after modifying this file
 
 	// Foo is an example field of TestRunner. Edit testrunner_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+	Replicas *int32 `json:"replicas,omitempty"`
 }
 
 // TestRunnerStatus defines the observed state of TestRunner

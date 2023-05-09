@@ -19,12 +19,14 @@ package controllers
 import (
 	"context"
 
+	operatorv1alpha1 "github.com/kelson-martins/tester-operator/api/v1alpha1"
+	assets "github.com/kelson-martins/tester-operator/assets"
+	appsv1 "k8s.io/api/apps/v1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-
-	operatorv1alpha1 "github.com/kelson-martins/tester-operator/api/v1alpha1"
 )
 
 // TestRunnerReconciler reconciles a TestRunner object
@@ -36,6 +38,7 @@ type TestRunnerReconciler struct {
 //+kubebuilder:rbac:groups=operator.kelson.com,resources=testrunners,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=operator.kelson.com,resources=testrunners/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=operator.kelson.com,resources=testrunners/finalizers,verbs=update
+//+kubebuilder:rbac:groups=apps,resources=deployments,verbs=get;list;watch;create;update;patch;delete
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
@@ -51,12 +54,75 @@ func (r *TestRunnerReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 
 	// TODO(user): your logic here
 
-	return ctrl.Result{}, nil
+	logger := log.FromContext(ctx)
+
+	operatorCR := &operatorv1alpha1.TestRunner{}
+
+	err := r.Get(ctx, req.NamespacedName, operatorCR)
+
+	if err != nil && errors.IsNotFound(err) {
+
+		logger.Info("Operator resource object not found.")
+
+		return ctrl.Result{}, nil
+
+	} else if err != nil {
+
+		logger.Error(err, "Error getting operator resource object")
+
+		return ctrl.Result{}, err
+
+	}
+
+	deployment := &appsv1.Deployment{}
+
+	create := false
+
+	err = r.Get(ctx, req.NamespacedName, deployment)
+
+	if err != nil && errors.IsNotFound(err) {
+
+		create = true
+
+		deployment = assets.GetDeploymentFromFile("assets/deployment.yaml")
+
+	} else if err != nil {
+
+		logger.Error(err, "Error getting existing Test Runner deployment.")
+
+		return ctrl.Result{}, err
+
+	}
+
+	deployment.Namespace = req.Namespace
+
+	deployment.Name = req.Name
+
+	if operatorCR.Spec.Replicas != nil {
+
+		deployment.Spec.Replicas = operatorCR.Spec.Replicas
+
+	}
+
+	ctrl.SetControllerReference(operatorCR, deployment, r.Scheme)
+
+	if create {
+
+		err = r.Create(ctx, deployment)
+
+	} else {
+
+		err = r.Update(ctx, deployment)
+
+	}
+
+	return ctrl.Result{}, err
 }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *TestRunnerReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&operatorv1alpha1.TestRunner{}).
+		Owns(&appsv1.Deployment{}).
 		Complete(r)
 }
