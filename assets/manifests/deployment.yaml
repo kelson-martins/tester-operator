@@ -18,4 +18,3 @@ spec:
       containers:
         - name: "tester"
           image: "andersonmtu/tavern-tests"
-          command: ["sleep 9000000"]
