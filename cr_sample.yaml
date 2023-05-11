@@ -1,0 +1,7 @@
+apiVersion: operator.kelson.com/v1alpha1
+kind: TestRunner
+metadata:
+  name: tester
+  namespace: tester-operator-system
+spec:
+  replicas: 1
