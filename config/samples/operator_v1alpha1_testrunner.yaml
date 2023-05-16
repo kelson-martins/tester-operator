@@ -1,4 +1,4 @@
-apiVersion: operator.kelson.com/v1alpha1
+apiVersion: operator.anderson.com/v1alpha1
 kind: TestRunner
 metadata:
   labels:

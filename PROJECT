@@ -2,7 +2,7 @@
 # This file is used to track the info used to scaffold your project
 # and allow the plugins properly work.
 # More info: https://book.kubebuilder.io/reference/project-config.html
-domain: kelson.com
+domain: anderson.com
 layout:
 - go.kubebuilder.io/v3
 plugins:
@@ -15,7 +15,7 @@ resources:
     crdVersion: v1
     namespaced: true
   controller: true
-  domain: kelson.com
+  domain: anderson.com
   group: operator
   kind: TestRunner
   path: github.com/kelson-martins/tester-operator/api/v1alpha1

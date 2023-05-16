@@ -12,7 +12,7 @@ metadata:
   name: testrunner-editor-role
 rules:
 - apiGroups:
-  - operator.kelson.com
+  - operator.anderson.com
   resources:
   - testrunners
   verbs:
@@ -24,7 +24,7 @@ rules:
   - update
   - watch
 - apiGroups:
-  - operator.kelson.com
+  - operator.anderson.com
   resources:
   - testrunners/status
   verbs:
